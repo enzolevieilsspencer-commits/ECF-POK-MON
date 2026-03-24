@@ -1,0 +1,177 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: #f5f5f5;
+}
+
+header nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 20px;
+    background: #D9D9D9;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+header nav a {
+    text-decoration: none;
+    color: black;
+}
+
+header nav ul {
+    list-style: none;
+    display: flex;
+    gap: 80px;
+}
+
+header nav .search-bar {
+    display: flex;
+    gap: 10px;
+}
+
+header nav .search-bar input {
+    width: 200px;
+    height: 30px;
+    border: 1px solid #D9D9D9;
+    border-radius: 15px;
+    padding: 0 10px;
+}
+
+header nav .search-bar button {
+    width: 35px;
+    height: 35px;
+    border: 1px solid #D9D9D9;
+    border-radius: 15px;
+}
+
+header nav .search-bar button i {
+    font-size: 15px;
+}
+
+main {
+    padding: 110px 32px 20px;
+}
+
+main .pokemon-list {
+    margin: 0 auto;
+    max-width: 1200px;
+}
+
+.pokemon-list-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.pokemon-list-title h1 {
+    margin: 0 0 8px;
+    font-size: 32px;
+    line-height: 1.1;
+}
+
+.pokemon-list-title p {
+    margin: 0;
+    font-size: 20px;
+    color: #2f2f2f;
+}
+
+.pokemon-list-filters {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 10px;
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.filter-group label {
+    font-size: 15px;
+    font-weight: 600;
+    color: #3f3f3f;
+}
+/* Pokemon Card Style 
+main .pokemon-card {
+    background: #ffffff;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+    width: 300px;
+    height: 250px;
+    transition: transform 0.3s ease;
+}
+
+main .pokemon-card:hover {
+    transform: scale(1.05);
+}*/ 
+
+main select#region {
+    width: 230px;
+    height: 54px;
+    border: 1px solid #d1d1d1;
+    border-radius: 14px;
+    padding: 0 14px;
+    background: #fff;
+    font-size: 15px;
+    color: #1f1f1f;
+}
+
+main select#type {
+    width: 230px;
+    height: 54px;
+    border: 1px solid #d1d1d1;
+    border-radius: 14px;
+    padding: 0 14px;
+    background: #fff;
+    font-size: 15px;
+    color: #1f1f1f;
+}
+
+main select option {
+    font-size: 18px;
+    color: black;
+    background: #fff;
+}
+
+footer {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    background: #D9D9D9;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+}
+
+footer a {
+    text-decoration: none;
+    color: black;
+    margin-right: 20px;
+}
+
+footer a i {
+    font-size: 20px;
+}
+
+footer p#ECF-FRONT-END {
+    font-size: 15px;
+    color: black;
+    text-align: center;
+    margin-top: 20px;
+    margin-left: 20px;
+}
+
+footer p#copyright {
+    font-size: 15px;
+    color: black;
+    margin-left: 180px;
+}
+
