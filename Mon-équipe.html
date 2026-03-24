@@ -4,21 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pokédex</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="style.css">
+    <script src="js/Mon-équipe.js" defer></script>
     <script src="https://kit.fontawesome.com/ae7ff15837.js" crossorigin="anonymous"></script>
 </head>
 <body>
     <header>
         <nav>
-            <a href="index.html"> 
-                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M0.501 38.2142C0.500375 38.1427 0.5 38.0711 0.5 37.9995C0.5 25.2279 10.8534 14.8745 23.625 14.8745C36.3966 14.8745 46.75 25.2279 46.75 37.9995C46.75 38.0711 46.7496 38.1427 46.749 38.2142" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M0.576378 40.725C4.7955 36.1779 10.3636 32.9001 16.6444 31.5284" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M46.75 40.725C42.5309 36.1779 36.9628 32.9001 30.682 31.5284" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M23.625 36.8787C27.24 36.8787 30.1706 33.9482 30.1706 30.3331C30.1706 26.7181 27.24 23.7875 23.625 23.7875C20.01 23.7875 17.0794 26.7181 17.0794 30.3331C17.0794 33.9482 20.01 36.8787 23.625 36.8787Z" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M44.25 0.5H3C1.61925 0.5 0.5 1.61925 0.5 3V44.25C0.5 45.6307 1.61925 46.75 3 46.75H44.25C45.6307 46.75 46.75 45.6307 46.75 44.25V3C46.75 1.61925 45.6307 0.5 44.25 0.5Z" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M23.625 33.4581C25.3509 33.4581 26.75 32.059 26.75 30.3331C26.75 28.6072 25.3509 27.2081 23.625 27.2081C21.8991 27.2081 20.5 28.6072 20.5 30.3331C20.5 32.059 21.8991 33.4581 23.625 33.4581Z" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+            <a href="index.html">
+                <img class="nav-logo" src="public/favicoin.svg" alt="Logo Pokédex">
             </a>
             <ul>
                 <li><a href="index.html">Découvrir les Pokémons</a></li>
@@ -33,18 +28,15 @@
         </nav>
     </header>
     <main>
+        <h1 id="titre-equipe">Mon équipe (MAX 6 Pokémons)</h1>
 
+            <div class="pokemon-grid" id="team-grid">
+                <article class="pokemon-card"></article>
+            </div>
     </main>
     <footer>
         <a href="index.html">
-            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M0.501 38.2142C0.500375 38.1427 0.5 38.0711 0.5 37.9995C0.5 25.2279 10.8534 14.8745 23.625 14.8745C36.3966 14.8745 46.75 25.2279 46.75 37.9995C46.75 38.0711 46.7496 38.1427 46.749 38.2142" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M0.576378 40.725C4.7955 36.1779 10.3636 32.9001 16.6444 31.5284" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M46.75 40.725C42.5309 36.1779 36.9628 32.9001 30.682 31.5284" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M23.625 36.8787C27.24 36.8787 30.1706 33.9482 30.1706 30.3331C30.1706 26.7181 27.24 23.7875 23.625 23.7875C20.01 23.7875 17.0794 26.7181 17.0794 30.3331C17.0794 33.9482 20.01 36.8787 23.625 36.8787Z" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M44.25 0.5H3C1.61925 0.5 0.5 1.61925 0.5 3V44.25C0.5 45.6307 1.61925 46.75 3 46.75H44.25C45.6307 46.75 46.75 45.6307 46.75 44.25V3C46.75 1.61925 45.6307 0.5 44.25 0.5Z" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M23.625 33.4581C25.3509 33.4581 26.75 32.059 26.75 30.3331C26.75 28.6072 25.3509 27.2081 23.625 27.2081C21.8991 27.2081 20.5 28.6072 20.5 30.3331C20.5 32.059 21.8991 33.4581 23.625 33.4581Z" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+            <img class="footer-logo" src="public/favicoin.svg" alt="Logo Pokédex">
         </a>
         <a href="https://www.linkedin.com/in/enzo-spencer-bb1065372/">
             <i class="fab fa-linkedin"></i>
