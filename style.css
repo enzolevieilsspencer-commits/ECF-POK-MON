@@ -522,9 +522,65 @@ footer p.copyright {
     gap: 8px;
 }
 
+#detail-root .pokemon-description {
+    flex: 1;
+    min-width: 0;
+    font-size: 15px;
+    line-height: 1.35;
+    color: #2f2f2f;
+    font-weight: 500;
+    opacity: 0.95;
+    padding-right: 10px;
+}
+
 #detail-root .pokemon-badge {
     font-size: 14px;
     padding: 7px 12px;
+}
+
+/* ---------- Ecran détails : cartes d'évolution ---------- */
+#detail-root .evolution-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+    width: 100%;
+}
+
+#detail-root .evolution-card {
+    width: 210px;
+    background: #ffffff;
+    border: 1px solid #e7e7f0;
+    border-radius: 14px;
+    padding: 12px 12px 14px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.06);
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+#detail-root .evolution-image {
+    width: 88px;
+    height: 88px;
+    object-fit: contain;
+}
+
+#detail-root .evolution-name {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 800;
+    text-align: center;
+    text-transform: capitalize;
+}
+
+#detail-root .evolution-number {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: #555d70;
 }
 
 /* ---------- Responsive ---------- */
