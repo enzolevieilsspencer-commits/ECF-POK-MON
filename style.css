@@ -1,9 +1,23 @@
+/* Evite le débordement horizontal sur mobile */
+html {
+    overflow-x: hidden;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* Base globale de la page */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     background: #f7f7fb;
+    padding-top: 88px;
 }
 
+/* Barre de navigation fixe en haut */
 header nav {
     display: flex;
     justify-content: space-around;
@@ -11,30 +25,40 @@ header nav {
     padding: 20px;
     background: #ffffff;
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
 }
 
+/* Liens de navigation */
 header nav a {
     text-decoration: none;
     color: black;
 }
 
+/* Logo dans la navigation */
 header nav .nav-logo {
     width: 48px;
     height: 48px;
     display: block;
 }
 
+/* Liste des liens du menu */
 header nav ul {
     list-style: none;
     display: flex;
     gap: 80px;
 }
 
+/* Zone de recherche dans le header */
 header nav .search-bar {
     display: flex;
     gap: 10px;
 }
 
+/* Champ de recherche */
 header nav .search-bar input {
     width: 200px;
     height: 30px;
@@ -44,6 +68,7 @@ header nav .search-bar input {
     background: #ffffff;
 }
 
+/* Bouton de recherche */
 header nav .search-bar button {
     width: 35px;
     height: 35px;
@@ -52,10 +77,12 @@ header nav .search-bar button {
     background: #ffffff;
 }
 
+/* Icône du bouton de recherche */
 header nav .search-bar button i {
     font-size: 15px;
 }
 
+/* Bouton de changement de theme */
 header nav #theme-toggle {
     width: 35px;
     height: 35px;
@@ -64,19 +91,23 @@ header nav #theme-toggle {
     background: #ffffff;
 }
 
+/* Icône du bouton de theme */
 header nav #theme-toggle i {
     font-size: 15px;
 }
 
+/* Conteneur principal du contenu */
 main {
     padding: 32px 32px 110px;
 }
 
+/* Zone centrale de la liste de Pokemon */
 main .pokemon-list {
     margin: 0 auto;
     max-width: 1200px;
 }
 
+/* En-tête de la liste (titre + filtres) */
 .pokemon-list-header {
     display: flex;
     align-items: flex-start;
@@ -85,18 +116,21 @@ main .pokemon-list {
     margin-bottom: 24px;
 }
 
+/* Bloc titre principal */
 .pokemon-list-title h1 {
     margin: 0 0 8px;
     font-size: 32px;
     line-height: 1.1;
 }
 
+/* Sous-titre de la page */
 .pokemon-list-title p {
     margin: 0;
     font-size: 20px;
     color: #2f2f2f;
 }
 
+/* Alignement des filtres */
 .pokemon-list-filters {
     display: flex;
     align-items: center;
@@ -104,12 +138,14 @@ main .pokemon-list {
     margin-top: 10px;
 }
 
+/* Un groupe label + select */
 .filter-group {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
+/* Style des libellés de filtres */
 .filter-group label {
     font-size: 15px;
     font-weight: 600;
@@ -122,12 +158,20 @@ main .pokemon-grid {
     gap: 16px;
 }
 
+main .pokemon-grid > .pokemon-card img {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+/* Conteneur du bouton "charger plus" */
 .load-more-wrapper {
     display: flex;
     justify-content: center;
     margin: 24px 0 16px;
 }
 
+/* Bouton pour charger plus de cartes */
 #load-more {
     border: 1px solid #d1d1d1;
     background: #ffffff;
@@ -137,6 +181,7 @@ main .pokemon-grid {
     cursor: pointer;
 }
 
+/* Etat desactive du bouton */
 #load-more:disabled {
     opacity: 0.7;
     cursor: not-allowed;
@@ -156,18 +201,47 @@ main .pokemon-card {
     justify-content: space-between;
     gap: 14px;
     transition: transform 0.3s ease;
+    position: relative; /* permet de positionner l'étoile */
 }
 
+/* Etoile "petite" pour ajouter à l'équipe (page index) */
+main .pokemon-add-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 6px;
+    font-size: 0; /* pas de texte, seulement l'icône */
+    z-index: 2;
+}
+
+main .pokemon-add-btn i {
+    font-size: 12px;
+    margin: 0;
+}
+
+/* Leger effet visuel au survol */
 main .pokemon-card:hover {
     transform: translateY(-2px);
 }
 
+/* Ligne haute de la carte (image + infos) */
 .pokemon-card-top {
     display: flex;
     align-items: flex-start;
     gap: 10px;
 }
 
+/* Lien "détails" sur les cartes (image + infos) */
+.pokemon-card-link {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    text-decoration: none;
+    color: inherit;
+    flex: 1;
+}
+
+/* Miniature du Pokemon */
 .pokemon-image {
     width: 68px;
     height: 68px;
@@ -175,6 +249,7 @@ main .pokemon-card:hover {
     flex-shrink: 0;
 }
 
+/* Colonne texte de la carte */
 .pokemon-content {
     display: flex;
     flex-direction: column;
@@ -182,6 +257,7 @@ main .pokemon-card:hover {
     min-width: 0;
 }
 
+/* Nom du Pokemon */
 .pokemon-title {
     margin: 0;
     font-size: 22px;
@@ -190,6 +266,7 @@ main .pokemon-card:hover {
     text-transform: capitalize;
 }
 
+/* Numero du Pokemon */
 .pokemon-number {
     margin: 0;
     font-size: 16px;
@@ -197,6 +274,7 @@ main .pokemon-card:hover {
     color: #555d70;
 }
 
+/* Liste des badges/types */
 .pokemon-badges {
     display: flex;
     flex-wrap: wrap;
@@ -204,6 +282,13 @@ main .pokemon-card:hover {
     margin-top: 2px;
 }
 
+/* Stats (page détails) : un peu plus d'espace entre les badges */
+.pokemon-stats {
+    gap: 14px;
+    justify-content: center;
+}
+
+/* Badge de type */
 .pokemon-badge {
     border: 2px solid #d8d8df;
     border-radius: 999px;
@@ -214,6 +299,7 @@ main .pokemon-card:hover {
     background: #fff;
 }
 
+/* Ligne basse de la carte (actions) */
 .pokemon-card-bottom {
     display: flex;
     align-items: center;
@@ -221,6 +307,7 @@ main .pokemon-card:hover {
     gap: 8px;
 }
 
+/* Lien vers la page details */
 .pokemon-details-link {
     text-decoration: none;
     color: #121d39;
@@ -228,11 +315,13 @@ main .pokemon-card:hover {
     font-weight: 700;
 }
 
+/* Fleche/icone du lien details */
 .pokemon-details-link span {
     color: #000000;
     margin-left: 6px;
 }
 
+/* Bouton d'ajout a l'equipe */
 .pokemon-add-btn {
     border: 2px solid #d8d8df;
     border-radius: 999px;
@@ -247,19 +336,23 @@ main .pokemon-card:hover {
     cursor: pointer;
 }
 
+/* Icône du bouton d'ajout */
 .pokemon-add-btn i {
     font-size: 14px;
     color: #121d39;
 }
 
+/* Icône en etat favori */
 .pokemon-add-btn.is-favorite i {
     color: #f6c90e;
 }
 
+/* Survol du bouton d'ajout */
 .pokemon-add-btn:hover {
     border-color: #bfc3cd;
 }
 
+/* Bloc d'actions (bouton + message) */
 .pokemon-card-actions {
     display: flex;
     flex-direction: column;
@@ -267,6 +360,7 @@ main .pokemon-card:hover {
     gap: 6px;
 }
 
+/* Message de feedback d'ajout */
 .pokemon-add-message {
     margin: 0;
     font-size: 12px;
@@ -275,10 +369,12 @@ main .pokemon-card:hover {
     text-align: right;
 }
 
+/* Variante succes du message */
 .pokemon-add-message.success {
     color: #1f9d4a;
 }
 
+/* Select de region */
 main select#region {
     width: 170px;
     height: 30px;
@@ -290,6 +386,7 @@ main select#region {
     color: #1f1f1f;
 }
 
+/* Select de type */
 main select#type {
     width: 170px;
     height: 30px;
@@ -301,15 +398,19 @@ main select#type {
     color: #1f1f1f;
 }
 
+/* Options communes des selects */
 main select option {
     font-size: 18px;
     color: black;
     background: #fff;
 }
 
+/* Footer fixe en bas */
 footer {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    gap: 16px;
     padding: 20px;
     background: #ffffff;
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
@@ -320,40 +421,327 @@ footer {
     z-index: 1000;
 }
 
-footer a {
-    text-decoration: none;
-    color: black;
-    margin-right: 20px;
+/* Bloc gauche : SVG + icônes réseaux */
+footer .footer-icons {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-shrink: 0;
 }
 
+/* Liens du footer */
+footer .footer-icons a {
+    text-decoration: none;
+    color: black;
+}
+
+/* Logo dans le footer */
 footer .footer-logo {
     width: 48px;
     height: 48px;
     display: block;
 }
 
-footer a i {
+/* Icônes sociales/footer */
+footer .footer-icons a i {
     font-size: 20px;
 }
 
+/* Bloc droite : textes alignés à droite */
+footer .footer-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    text-align: right;
+    min-width: 0;
+}
+
+/* Texte ECF dans le footer */
 footer p.ECF-FRONT-END {
     font-size: 15px;
     color: black;
-    text-align: center;
-    margin-top: 20px;
-    margin-left: 20px;
+    margin: 0;
+    text-align: right;
 }
 
+/* Copyright */
 footer p.copyright {
     font-size: 15px;
     color: black;
-    margin-left: 180px;
+    margin: 0;
+    text-align: right;
+}
+
+/* ---------- Détails Pokémon (grande card centrée) ---------- */
+
+#detail-root {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+#detail-root > a {
+    align-self: flex-start;
+    margin-bottom: 6px;
+    color: inherit;
+    text-decoration: none;
+}
+
+#detail-root .pokemon-card {
+    width: min(900px, 100%);
+    padding: 26px 24px;
+    border-radius: 20px;
+    min-height: 0;
+    justify-content: flex-start;
+    gap: 18px;
+}
+
+#detail-root .pokemon-card-top {
+    align-items: center;
+    gap: 22px;
+}
+
+#detail-root .pokemon-image {
+    width: 140px;
+    height: 140px;
+}
+
+#detail-root .pokemon-title {
+    font-size: 30px;
+    line-height: 1.05;
+}
+
+#detail-root .pokemon-number {
+    font-size: 18px;
+}
+
+#detail-root .pokemon-badges {
+    margin-top: 10px;
+    gap: 8px;
+}
+
+#detail-root .pokemon-badge {
+    font-size: 14px;
+    padding: 7px 12px;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 992px) {
+    main {
+        padding: 24px 20px 110px;
+    }
+
+    main .pokemon-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .pokemon-list-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .pokemon-list-filters {
+        flex-wrap: wrap;
+    }
+
+    header nav ul {
+        gap: 32px;
+    }
+
+    header nav .search-bar input {
+        width: 160px;
+    }
+}
+
+@media (max-width: 720px) {
+    body {
+        padding-top: 0;
+    }
+
+    header nav {
+        position: relative;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 12px 16px;
+        padding: 16px;
+    }
+
+    header nav > a {
+        flex-shrink: 0;
+        line-height: 0;
+    }
+
+    header nav ul {
+        flex: 1;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 12px 18px;
+        padding: 0;
+        margin: 0;
+        min-width: 0;
+    }
+
+    header nav ul li a {
+        font-size: 14px;
+    }
+
+    header nav .search-bar {
+        flex-basis: 100%;
+        width: 100%;
+        max-width: none;
+        margin: 0;
+    }
+
+    header nav .search-bar input {
+        flex: 1;
+        min-width: 0;
+        width: auto;
+    }
+
+    main {
+        padding: 20px 16px 120px;
+    }
+
+    main .pokemon-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .pokemon-list-title h1 {
+        font-size: 26px;
+    }
+
+    .pokemon-list-title p {
+        font-size: 16px;
+        line-height: 1.4;
+    }
+
+    .pokemon-list-filters {
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 8px;
+    }
+
+    .filter-group {
+        flex: 1 1 0;
+        min-width: 0;
+        gap: 6px;
+    }
+
+    .filter-group label {
+        font-size: 13px;
+        flex-shrink: 0;
+    }
+
+    main select#region,
+    main select#type {
+        width: auto;
+        flex: 1;
+        min-width: 0;
+        max-width: 100%;
+        padding: 0 8px;
+        font-size: 13px;
+    }
+
+    .pokemon-title {
+        font-size: 20px;
+    }
+
+    .pokemon-details-link {
+        font-size: 16px;
+    }
+
+    .pokemon-card-bottom {
+        flex-wrap: wrap;
+    }
+
+    footer {
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 16px;
+        gap: 12px;
+    }
+
+    footer .footer-icons {
+        gap: 10px;
+    }
+
+    footer .footer-logo {
+        width: 40px;
+        height: 40px;
+    }
+
+    footer p.ECF-FRONT-END {
+        font-size: 14px;
+    }
+
+    footer p.copyright {
+        font-size: 12px;
+        line-height: 1.35;
+        color: #444;
+    }
+
+    #titre-equipe {
+        font-size: 20px;
+        padding: 0 8px;
+    }
+
+    /* Détails Pokémon mobile */
+    #detail-root .pokemon-card {
+        padding: 18px 14px;
+    }
+
+    #detail-root .pokemon-image {
+        width: 96px;
+        height: 96px;
+    }
+
+    #detail-root .pokemon-title {
+        font-size: 22px;
+    }
+}
+
+@media (max-width: 380px) {
+    header nav ul {
+        gap: 8px 12px;
+    }
+
+    header nav ul li a {
+        font-size: 13px;
+    }
+
+    .pokemon-list-filters {
+        gap: 6px;
+    }
+
+    .filter-group label {
+        font-size: 12px;
+    }
+
+    main select#region,
+    main select#type {
+        font-size: 12px;
+        padding: 0 6px;
+    }
+
+    .pokemon-list-title h1 {
+        font-size: 22px;
+    }
 }
 
 
 /*......................................................................................................................................*/
 
 /* Mon équipe */
+/* Titre de la page Mon equipe */
 #titre-equipe {
     font-size: 24px;
     font-weight: 700;
