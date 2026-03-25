@@ -1,6 +1,12 @@
-// ECF Pokémon — page « Mon équipe » : affichage & suppression depuis localStorage.
 const TEAM_KEY = "mon_equipe_v1";
 const TEAM_MAX = 6;
+
+function pad4(number) {
+  // Affiche #0001 au lieu de #1
+  let s = String(number);
+  while (s.length < 4) s = "0" + s;
+  return s;
+}
 
 function lireEquipe() {
   const json = localStorage.getItem(TEAM_KEY);
@@ -15,36 +21,53 @@ function creerCartePokemon(pokemon) {
   const card = document.createElement("div");
   card.className = "pokemon-card";
 
-  const typesHtml = (pokemon.types || [])
-    .map((t) => `<span class="pokemon-badge">${t}</span>`)
-    .join("");
+  let typesHtml = "";
+  let types = pokemon.types || [];
+  for (let i = 0; i < types.length; i++) {
+    typesHtml = typesHtml + '<span class="pokemon-badge">' + types[i] + "</span>";
+  }
 
-  card.innerHTML = `
-    <div class="pokemon-card-top">
-      <a
-        class="pokemon-card-link"
-        href="details.html?id=${pokemon.id}"
-        aria-label="Voir les détails de ${pokemon.name}"
-      >
-        <img class="pokemon-image" src="${pokemon.image}" alt="${pokemon.name}">
-        <div class="pokemon-content">
-          <h3 class="pokemon-title">${pokemon.name}</h3>
-          <p class="pokemon-number">#${String(pokemon.id).padStart(4, "0")}</p>
-          <div class="pokemon-badges">${typesHtml}</div>
-        </div>
-      </a>
-    </div>
+  card.innerHTML =
+    '<div class="pokemon-card-top">' +
+    '<a class="pokemon-card-link" href="details.html?id=' +
+    pokemon.id +
+    '" aria-label="Voir les détails de ' +
+    pokemon.name +
+    '">' +
+    '<img class="pokemon-image" src="' +
+    pokemon.image +
+    '" alt="' +
+    pokemon.name +
+    '">' +
+    '<div class="pokemon-content">' +
+    '<h3 class="pokemon-title">' +
+    pokemon.name +
+    "</h3>" +
+    '<p class="pokemon-number">#' +
+    pad4(pokemon.id) +
+    "</p>" +
+    '<div class="pokemon-badges">' +
+    typesHtml +
+    "</div>" +
+    "</div>" +
+    "</a>" +
+    "</div>" +
+    '<div class="pokemon-card-bottom">' +
+    '<button class="pokemon-add-btn is-favorite" type="button" aria-label="Supprimer">' +
+    '<i class="fas fa-star" aria-hidden="true"></i> Supprimer' +
+    "</button>" +
+    "</div>";
 
-    <div class="pokemon-card-bottom">
-      <button class="pokemon-add-btn is-favorite" type="button" aria-label="Supprimer">
-        <i class="fas fa-star" aria-hidden="true"></i> Supprimer
-      </button>
-    </div>
-  `;
-
-  card.querySelector("button.pokemon-add-btn").addEventListener("click", () => {
-    const equipe = lireEquipe();
-    const idx = equipe.findIndex((p) => p.id === pokemon.id);
+  let btn = card.querySelector("button.pokemon-add-btn");
+  btn.addEventListener("click", function () {
+    let equipe = lireEquipe();
+    let idx = -1;
+    for (let k = 0; k < equipe.length; k++) {
+      if (equipe[k].id === pokemon.id) {
+        idx = k;
+        break;
+      }
+    }
     if (idx === -1) return;
 
     equipe.splice(idx, 1);
@@ -67,9 +90,11 @@ function afficherEquipe() {
     return;
   }
 
-  equipe.slice(0, TEAM_MAX).forEach((pokemon) => {
-    teamGrid.appendChild(creerCartePokemon(pokemon));
-  });
+  let max = TEAM_MAX;
+  if (equipe.length < max) max = equipe.length;
+  for (let i2 = 0; i2 < max; i2++) {
+    teamGrid.appendChild(creerCartePokemon(equipe[i2]));
+  }
 }
 
 afficherEquipe();

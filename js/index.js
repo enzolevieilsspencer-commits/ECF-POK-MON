@@ -1,59 +1,30 @@
-// ECF Pokémon — page d’accueil / liste : on réécrit la logique ensemble, étape par étape.
+// Page liste Pokémons : recherche, filtres, "Charger plus"
 const LIMIT = 50;
 let offset = 0;
 
-// Stockage de l'équipe (MAX 6)
+// Équipe sauvegardée dans `localStorage` (MAX 6)
 const TEAM_KEY = "mon_equipe_v1";
 const TEAM_MAX = 6;
-
-// Cache long terme des détails Pokémon pour éviter les refetch inutiles
-const POKEMON_DETAILS_CACHE_KEY = "pokemon_details_cache_v1";
-
-// Cache temporaire quand on navigue vers details.html puis qu'on revient
-const CACHE_KEY = "pokemon_list_cache_v1";
-const SCROLL_KEY = "pokemon_list_scrollY_v1";
 
 let cartesChargees = [];
 let hasMore = true;
 
-function safeJsonParse(value) {
-  try {
-    return JSON.parse(value);
-  } catch {
-    return null;
-  }
-}
-
-function lireDetailsCache() {
-  try {
-    const raw = localStorage.getItem(POKEMON_DETAILS_CACHE_KEY);
-    if (!raw) return { version: 1, byId: {} };
-    const parsed = safeJsonParse(raw);
-    if (!parsed || parsed.version !== 1 || !parsed.byId) return { version: 1, byId: {} };
-    return parsed;
-  } catch {
-    return { version: 1, byId: {} };
-  }
-}
-
-function sauvegarderDetailsCache(cache) {
-  try {
-    localStorage.setItem(POKEMON_DETAILS_CACHE_KEY, JSON.stringify(cache));
-  } catch {
-    // Ignore si localStorage indisponible ou plein
-  }
-}
-
 function extraireIdDepuisUrl(url) {
-  // Exemple: https://pokeapi.co/api/v2/pokemon/1/
   const parts = String(url).split("/").filter(Boolean);
   const last = parts[parts.length - 1];
   const id = Number(last);
   return Number.isFinite(id) ? id : null;
 }
 
+function pad4(number) {
+  // Affiche #0001 au lieu de #1
+  let s = String(number);
+  while (s.length < 4) s = "0" + s;
+  return s;
+}
+
 function regionDepuisId(id) {
-  // Approximation par génération (ID PokeDex). Les options UI semblent limitées à 5 régions.
+  // Région estimée à partir de l'ID (simplification)
   if (id >= 1 && id <= 151) return "kanto";
   if (id >= 152 && id <= 251) return "johto";
   if (id >= 252 && id <= 386) return "hoenn";
@@ -63,9 +34,17 @@ function regionDepuisId(id) {
 }
 
 function getCurrentFilters() {
-  const search = document.querySelector("#search")?.value?.trim().toLowerCase() || "";
-  const region = document.querySelector("#region")?.value || "";
-  const type = document.querySelector("#type")?.value || "";
+  const searchEl = document.getElementById("search");
+  const regionEl = document.getElementById("region");
+  const typeEl = document.getElementById("type");
+
+  const search =
+    searchEl && searchEl.value
+      ? String(searchEl.value).trim().toLowerCase()
+      : "";
+  const region = regionEl ? regionEl.value : "";
+  const type = typeEl ? typeEl.value : "";
+
   return { search, region, type };
 }
 
@@ -74,12 +53,19 @@ function pokemonMatchFiltres(pokemon, filters) {
 
   if (filters.search) {
     const name = String(pokemon.name || "").toLowerCase();
-    if (!name.includes(filters.search)) return false;
+    if (name.indexOf(filters.search) === -1) return false;
   }
 
   if (filters.type) {
     const types = Array.isArray(pokemon.types) ? pokemon.types : [];
-    if (!types.includes(filters.type)) return false;
+    let ok = false;
+    for (let i = 0; i < types.length; i++) {
+      if (types[i] === filters.type) {
+        ok = true;
+        break;
+      }
+    }
+    if (!ok) return false;
   }
 
   if (filters.region) {
@@ -92,47 +78,13 @@ function pokemonMatchFiltres(pokemon, filters) {
 
 function appliquerFiltresEtRendre() {
   const filters = getCurrentFilters();
-  const cartesFiltrees = cartesChargees.filter((p) => pokemonMatchFiltres(p, filters));
+  const cartesFiltrees = [];
+  for (let i = 0; i < cartesChargees.length; i++) {
+    const p = cartesChargees[i];
+    if (pokemonMatchFiltres(p, filters)) cartesFiltrees.push(p);
+  }
   rendreCartes(cartesFiltrees);
 }
-
-function lireCache() {
-  try {
-    const raw = sessionStorage.getItem(CACHE_KEY);
-    if (!raw) return null;
-    const parsed = safeJsonParse(raw);
-    if (!parsed || parsed.version !== 1) return null;
-    return parsed;
-  } catch {
-    return null;
-  }
-}
-
-function sauvegarderCache() {
-  try {
-    sessionStorage.setItem(
-      CACHE_KEY,
-      JSON.stringify({
-        version: 1,
-        offset,
-        hasMore,
-        cards: cartesChargees,
-      }),
-    );
-  } catch {
-    // ignore si sessionStorage indisponible
-  }
-}
-
-function sauvegarderScroll() {
-  try {
-    sessionStorage.setItem(SCROLL_KEY, String(window.scrollY || 0));
-  } catch {
-    // ignore
-  }
-}
-
-window.addEventListener("pagehide", sauvegarderScroll);
 
 function lireEquipe() {
   const json = localStorage.getItem(TEAM_KEY);
@@ -145,16 +97,20 @@ function sauvegarderEquipe(equipe) {
 
 function togglePokemonDansEquipe(pokemon) {
   const equipe = lireEquipe();
-  const idx = equipe.findIndex((p) => p.id === pokemon.id);
+  let idx = -1;
+  for (let i = 0; i < equipe.length; i++) {
+    if (equipe[i].id === pokemon.id) {
+      idx = i;
+      break;
+    }
+  }
 
-  // Retrait si déjà présent
   if (idx !== -1) {
     equipe.splice(idx, 1);
     sauvegarderEquipe(equipe);
     return { ok: true, added: false, equipe };
   }
 
-  // Ajout si équipe pas pleine
   if (equipe.length >= TEAM_MAX) {
     return {
       ok: false,
@@ -171,7 +127,7 @@ function togglePokemonDansEquipe(pokemon) {
 function creerCartePokemon(pokemon) {
   const pokemonCard = document.createElement("a");
   pokemonCard.className = "pokemon-card";
-  pokemonCard.href = `details.html?id=${pokemon.id}`;
+  pokemonCard.href = "details.html?id=" + pokemon.id;
   pokemonCard.style.textDecoration = "none";
   pokemonCard.style.color = "inherit";
 
@@ -187,31 +143,44 @@ function creerCartePokemon(pokemon) {
   const p = document.createElement("p");
   p.className = "pokemon-number";
   const typesText = (pokemon.types || []).join(", ");
-  p.textContent = `#${String(pokemon.id).padStart(4, "0")} · ${typesText}`;
+  p.textContent = "#" + pad4(pokemon.id) + " · " + typesText;
 
-  // Etoile pour ajouter à l'équipe
   const addBtn = document.createElement("button");
   addBtn.type = "button";
   addBtn.className = "pokemon-add-btn";
   addBtn.setAttribute("aria-label", "Ajouter à l'équipe");
-  addBtn.innerHTML = `<i class="fas fa-star" aria-hidden="true"></i>`;
+  addBtn.innerHTML = '<i class="fas fa-star" aria-hidden="true"></i>';
 
-  const inTeam = lireEquipe().some((p0) => p0.id === pokemon.id);
+  const equipe = lireEquipe();
+  let inTeam = false;
+  for (let i = 0; i < equipe.length; i++) {
+    if (equipe[i].id === pokemon.id) {
+      inTeam = true;
+      break;
+    }
+  }
   if (inTeam) addBtn.classList.add("is-favorite");
 
-  addBtn.addEventListener("click", (e) => {
+  addBtn.addEventListener("click", function (e) {
     e.preventDefault();
     e.stopPropagation();
 
     const result = togglePokemonDansEquipe(pokemon);
     if (!result.ok) {
-      // Pour l'instant, on log (on pourra mettre un message UI après)
       console.warn(result.message);
       return;
     }
 
-    const nowInTeam = result.equipe.some((p0) => p0.id === pokemon.id);
-    addBtn.classList.toggle("is-favorite", nowInTeam);
+    let nowInTeam = false;
+    for (let i = 0; i < result.equipe.length; i++) {
+      if (result.equipe[i].id === pokemon.id) {
+        nowInTeam = true;
+        break;
+      }
+    }
+
+    if (nowInTeam) addBtn.classList.add("is-favorite");
+    else addBtn.classList.remove("is-favorite");
   });
 
   pokemonCard.appendChild(img);
@@ -227,32 +196,13 @@ function rendreCartes(cartes) {
   if (!pokemonList) return;
 
   pokemonList.innerHTML = "";
-  cartes.forEach((pokemon) => pokemonList.appendChild(creerCartePokemon(pokemon)));
-}
-
-function restaurerSiPossible() {
-  const cache = lireCache();
-  if (!cache || !Array.isArray(cache.cards) || cache.cards.length === 0) return false;
-
-  cartesChargees = cache.cards;
-  offset = typeof cache.offset === "number" ? cache.offset : cartesChargees.length;
-  hasMore = typeof cache.hasMore === "boolean" ? cache.hasMore : true;
-
-  appliquerFiltresEtRendre();
-
-  const loadBtn = document.querySelector("#load-more");
-  if (loadBtn) loadBtn.disabled = !hasMore;
-
-  const savedScrollY = Number(sessionStorage.getItem(SCROLL_KEY) || 0);
-  if (savedScrollY > 0) {
-    // Laisse le layout finir de se mettre en place avant de remonter.
-    setTimeout(() => window.scrollTo(0, savedScrollY), 0);
+  for (let i = 0; i < cartes.length; i++) {
+    pokemonList.appendChild(creerCartePokemon(cartes[i]));
   }
-
-  return true;
 }
 
 function chargerListePokemons(resetGrille) {
+  // Charge les Pokémon par lots (limit + offset), puis affiche
   const loadBtn = document.querySelector("#load-more");
   if (loadBtn) loadBtn.disabled = true;
 
@@ -260,119 +210,136 @@ function chargerListePokemons(resetGrille) {
     cartesChargees = [];
     offset = 0;
     hasMore = true;
-    sauvegarderCache();
 
-    // Pour éviter que l'ancienne grille reste affichée pendant le rechargement
     const pokemonList = document.querySelector(".pokemon-grid");
     if (pokemonList) pokemonList.innerHTML = "";
   }
 
-  fetch(`https://pokeapi.co/api/v2/pokemon?limit=${LIMIT}&offset=${offset}`)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Erreur HTTP: " + response.status);
-      }
-      return response.json();
+  fetch(
+    "https://pokeapi.co/api/v2/pokemon?limit=" + LIMIT + "&offset=" + offset,
+  )
+    .then(function (listRes) {
+      if (!listRes.ok) throw new Error("Erreur HTTP: " + listRes.status);
+      return listRes.json();
     })
-    .then((data) => {
-      const detailsCache = lireDetailsCache();
-      let detailsCacheMutated = false;
+    .then(function (data) {
+      const results = Array.isArray(data.results) ? data.results : [];
+      const details = [];
+      let i = 0;
 
-      const promises = data.results.map((pokemonSummary) => {
-        const id = extraireIdDepuisUrl(pokemonSummary.url);
-        if (id && detailsCache.byId && detailsCache.byId[id]) {
-          return Promise.resolve(detailsCache.byId[id]);
+      function pokemonExisteDeja(pokemonId) {
+        for (let k = 0; k < cartesChargees.length; k++) {
+          if (cartesChargees[k].id === pokemonId) return true;
+        }
+        return false;
+      }
+
+      function chargerSuivant() {
+        if (i >= results.length) {
+          for (let d = 0; d < details.length; d++) {
+            const p = details[d];
+            if (!p || !p.id) continue;
+            if (pokemonExisteDeja(p.id)) continue;
+            cartesChargees.push(p);
+          }
+
+          offset = offset + results.length;
+          hasMore = data.next !== null;
+
+          if (loadBtn) loadBtn.disabled = !hasMore;
+          appliquerFiltresEtRendre();
+          return;
         }
 
-        return fetch(pokemonSummary.url).then((response) => {
-          if (!response.ok) {
-            throw new Error("Erreur HTTP: " + response.status);
-          }
-          return response.json();
-        }).then((detail) => {
-          const imgSrc =
-            detail.sprites?.other?.["official-artwork"]?.front_default ||
-            detail.sprites?.front_default ||
-            "";
+        const pokemonSummary = results[i];
+        i = i + 1;
 
-          const pokemonTypes = (detail.types || []).map((t) => t.type.name);
+        fetch(pokemonSummary.url)
+          .then(function (res) {
+            if (!res.ok) throw new Error("Erreur HTTP: " + res.status);
+            return res.json();
+          })
+          .then(function (detail) {
+            let imgSrc = "";
+            if (
+              detail &&
+              detail.sprites &&
+              detail.sprites.other &&
+              detail.sprites.other["official-artwork"] &&
+              detail.sprites.other["official-artwork"].front_default
+            ) {
+              imgSrc = detail.sprites.other["official-artwork"].front_default;
+            } else if (
+              detail &&
+              detail.sprites &&
+              detail.sprites.front_default
+            ) {
+              imgSrc = detail.sprites.front_default;
+            }
 
-          const simplified = {
-            id: detail.id,
-            name: detail.name,
-            image: imgSrc,
-            types: pokemonTypes,
-          };
+            const pokemonTypes = [];
+            if (detail && Array.isArray(detail.types)) {
+              for (let t = 0; t < detail.types.length; t++) {
+                const typeObj = detail.types[t];
+                if (typeObj && typeObj.type && typeObj.type.name) {
+                  pokemonTypes.push(typeObj.type.name);
+                }
+              }
+            }
 
-          if (simplified.id != null) {
-            detailsCache.byId[simplified.id] = simplified;
-            detailsCacheMutated = true;
-          }
-
-          return simplified;
-        });
-      });
-
-      return Promise.all(promises).then((details) => {
-        if (detailsCacheMutated) sauvegarderDetailsCache(detailsCache);
-        return { details, data };
-      });
-    })
-    .then(({ details, data }) => {
-      // Renforce la robustesse contre d'éventuels doublons
-      const dejaPresent = new Set(cartesChargees.map((p) => p.id));
-      details.forEach((pokemon) => {
-        if (!pokemon || !pokemon.id) return;
-        if (dejaPresent.has(pokemon.id)) return;
-        cartesChargees.push(pokemon);
-        dejaPresent.add(pokemon.id);
-      });
-
-      offset += data.results.length;
-      hasMore = data.next !== null;
-      sauvegarderCache();
-
-      if (loadBtn) {
-        loadBtn.disabled = !hasMore;
+            details.push({
+              id: detail.id,
+              name: detail.name,
+              image: imgSrc,
+              types: pokemonTypes,
+            });
+          })
+          .catch(function (error) {
+            console.error("Erreur:", error);
+          })
+          .then(function () {
+            chargerSuivant();
+          });
       }
 
-      appliquerFiltresEtRendre();
+      chargerSuivant();
     })
-    .catch((error) => {
+    .catch(function (error) {
       console.error("Erreur:", error);
       if (loadBtn) loadBtn.disabled = false;
     });
 }
 
-// Recherche + filtres (filtrent uniquement ce qui est déjà chargé)
 function initialiserRechercheEtFiltres() {
-  const search = document.querySelector("#search");
-  const region = document.querySelector("#region");
-  const type = document.querySelector("#type");
+  const search = document.getElementById("search");
+  const region = document.getElementById("region");
+  const type = document.getElementById("type");
 
-  const rafDebounce = (fn, delayMs = 120) => {
-    let t = null;
-    return (...args) => {
-      clearTimeout(t);
-      t = setTimeout(() => fn(...args), delayMs);
-    };
-  };
+  if (search) {
+    search.addEventListener("input", function () {
+      appliquerFiltresEtRendre();
+    });
+  }
 
-  const handler = rafDebounce(() => {
-    appliquerFiltresEtRendre();
-  });
+  if (region) {
+    region.addEventListener("change", function () {
+      appliquerFiltresEtRendre();
+    });
+  }
 
-  search?.addEventListener("input", handler);
-  region?.addEventListener("change", handler);
-  type?.addEventListener("change", handler);
+  if (type) {
+    type.addEventListener("change", function () {
+      appliquerFiltresEtRendre();
+    });
+  }
 }
 
 initialiserRechercheEtFiltres();
+chargerListePokemons(true);
 
-if (!restaurerSiPossible()) {
-  chargerListePokemons(true);
+const loadMoreBtn = document.getElementById("load-more");
+if (loadMoreBtn) {
+  loadMoreBtn.addEventListener("click", function () {
+    chargerListePokemons(false);
+  });
 }
-
-document.querySelector("#load-more")?.addEventListener("click", () => {
-  chargerListePokemons(false);
-});
